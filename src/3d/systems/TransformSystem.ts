@@ -1,30 +1,29 @@
 import { System } from 'ecsy'
-import { Transform } from '../components/Transform'
+import { Position } from '../components/Position'
+import { Rotation } from '../components/Rotation'
+import { Scale } from '../components/Scale'
 import { Object3D } from '../components/Object3D'
 
-/**
- * Sistema que sincroniza o componente Transform com o objeto Three.js
- * Executa a cada frame para manter a visualização atualizada
- */
 export class TransformSystem extends System {
   static queries = {
     transform: {
-      components: [Transform, Object3D]
+      components: [Position, Rotation, Scale, Object3D]
     }
   }
 
-  /**
-   * Executado a cada frame
-   */
   execute(delta: number): void {
     const entities = this.queries.transform.results
 
     entities.forEach(entity => {
-      const transform = entity.getComponent(Transform)!
+      const position = entity.getComponent(Position)!
+      const rotation = entity.getComponent(Rotation)!
+      const scale = entity.getComponent(Scale)!
       const object3D = entity.getComponent(Object3D)!
 
-      // Aplica o transform ao objeto Three.js
-      transform.applyToObject3D(object3D.getObject3D())
+      const threeObject = object3D.value
+      threeObject.position.copy(position.value)
+      threeObject.rotation.copy(rotation.value)
+      threeObject.scale.copy(scale.value)
     })
   }
 }

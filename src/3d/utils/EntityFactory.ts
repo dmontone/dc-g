@@ -1,6 +1,8 @@
 import { World, Entity } from 'ecsy'
 import * as THREE from 'three'
-import { Transform } from '../components/Transform'
+import { Position } from '../components/Position'
+import { Rotation } from '../components/Rotation'
+import { Scale } from '../components/Scale'
 import { Object3D } from '../components/Object3D'
 import { Visible } from '../components/Visible'
 
@@ -55,15 +57,14 @@ export class EntityFactory {
   ): Entity {
     const entity = this.world.createEntity()
 
-    // Adiciona componentes
-    entity.addComponent(Transform)
-    const transform = entity.getComponent(Transform)!
-    transform.setPosition(position.x, position.y, position.z)
+    entity.addComponent(Position)
+    entity.getComponent(Position)!.value.set(position.x, position.y, position.z)
 
+    entity.addComponent(Rotation)
+    entity.addComponent(Scale)
     entity.addComponent(Object3D)
-    const object3D = entity.getComponent(Object3D)!
-    object3D.setObject3D(mesh)
-
+    const object3DComp = entity.getMutableComponent(Object3D)!
+    object3DComp.value = mesh
     entity.addComponent(Visible)
 
     return entity
@@ -75,7 +76,7 @@ export class EntityFactory {
   removeEntity(entity: Entity): void {
     const object3D = entity.getComponent(Object3D)
     if (object3D) {
-      const mesh = object3D.getObject3D() as THREE.Mesh
+      const mesh = object3D.value as THREE.Mesh
       
       // Remove da cena
       this.scene.remove(mesh)

@@ -30,7 +30,7 @@ export class RenderSystem extends System {
     entities.forEach(entity => {
       const object3D = entity.getComponent(Object3D)!
       const visible = entity.getComponent(Visible)!
-      const threeObject = object3D.getObject3D()
+      const threeObject = object3D.value
 
       // Gerencia visibilidade
       threeObject.visible = visible.isVisible()
