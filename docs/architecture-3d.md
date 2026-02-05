@@ -123,15 +123,12 @@ class World {
 class EntityFactory {
   removeEntity(entity) {
     const object3D = entity.getComponent(Object3D)
-    
-    // Limpa recursos da GPU
     if (object3D) {
-      const mesh = object3D.getObject3D()
-      mesh.geometry.dispose() // Libera geometria
-      mesh.material.dispose() // Libera material
+      const mesh = object3D.value as THREE.Mesh
+      this.scene.remove(mesh)
+      mesh.geometry.dispose()
+      if (mesh.material instanceof THREE.Material) mesh.material.dispose()
     }
-    
-    // Remove entidade ECSY
     entity.remove()
   }
 }
@@ -148,7 +145,9 @@ class EntityFactory {
 src/3d/
 ├── World.ts              # Mundo principal (ECSY + Three.js)
 ├── components/           # Componentes ECSY
-│   ├── Transform.ts      # Posição, rotação, escala
+│   ├── Position.ts       # Posição 3D
+│   ├── Rotation.ts       # Rotação 3D
+│   ├── Scale.ts          # Escala 3D
 │   ├── Object3D.ts       # Referência Three.js
 │   └── Visible.ts        # Controle de visibilidade
 ├── systems/              # Sistemas ECSY
@@ -167,15 +166,14 @@ src/3d/
 ### Criação de Entidades
 ```typescript
 // Via EntityFactory
-const cube = entityFactory.createCube(
-  { x: 0, y: 0, z: 0 }, // posição
-  1,                       // tamanho
-  0x00ff00                 // cor
-)
+const cube = entityFactory.createCube({ x: 0, y: 0, z: 0 }, 1, 0x00ff00)
+const sphere = entityFactory.createSphere({ x: 2, y: 0, z: 0 }, 0.5, 0xff0000)
 
 // Manualmente
 const entity = world.createEntity()
-entity.addComponent(Transform)
+entity.addComponent(Position)
+entity.addComponent(Rotation)
+entity.addComponent(Scale)
 entity.addComponent(Object3D)
 entity.addComponent(Visible)
 ```
@@ -184,16 +182,14 @@ entity.addComponent(Visible)
 ```typescript
 class MovementSystem extends System {
   static queries = {
-    movable: { components: [Transform, Velocity] }
+    movable: { components: [Position, Velocity] }
   }
   
   execute(delta) {
     this.queries.movable.results.forEach(entity => {
-      const transform = entity.getComponent(Transform)
+      const position = entity.getComponent(Position)
       const velocity = entity.getComponent(Velocity)
-      
-      // Atualiza posição
-      transform.position.add(velocity.value.clone().multiplyScalar(delta))
+      position.value.add(velocity.value.clone().multiplyScalar(delta))
     })
   }
 }
@@ -278,4 +274,5 @@ class PerformanceMonitor {
 
 **Última atualização**: 2026-02-05  
 **Versão**: 1.0.0  
-**Revisão**: Próxima revisão em 2026-05-05
+**Revisão**: Próxima revisão em 2026-05-05  
+**Mudanças**: Atualizada estrutura de componentes para Position, Rotation, Scale separados

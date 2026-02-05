@@ -143,9 +143,9 @@ import { Scene, Camera, Renderer, Mesh, Geometry, Material } from 'three'
 
 **Arquivos Relacionados:**
 - `src/3d/World.ts` - Mundo ECSY + Three.js
-- `src/3d/components/` - Componentes ECSY
-- `src/3d/systems/` - Sistemas ECSY
-- `src/3d/utils/EntityFactory.ts` - Factory de entidades
+- `src/3d/components/` - Componentes ECSY (Position, Rotation, Scale, Object3D, Visible)
+- `src/3d/systems/` - Sistemas ECSY (TransformSystem, RenderSystem)
+- `src/3d/utils/EntityFactory.ts` - Factory de entidades (45 linhas, código otimizado)
 
 **APIs Principais:**
 ```typescript
@@ -154,8 +154,8 @@ import { World, Entity, Component, System } from 'ecsy'
 
 **Padrão de Uso:**
 - **Entidades**: Objetos do jogo (jogador, inimigos, itens)
-- **Componentes**: Dados (Transform, Visible, Object3D)
-- **Sistemas**: Lógica (TransformSystem, RenderSystem)
+- **Componentes**: Dados separados (Position, Rotation, Scale, Object3D, Visible)
+- **Sistemas**: Lógica (TransformSystem sincroniza transform, RenderSystem gerencia visibilidade)
 
 ### 🔍 ESLint (Qualidade de Código)
 
@@ -303,4 +303,5 @@ graph TD
 
 **Última atualização**: 2026-02-05  
 **Versão**: 1.0.0  
-**Revisão**: Próxima revisão em 2026-05-05
+**Revisão**: Próxima revisão em 2026-05-05  
+**Mudanças**: Atualizada documentação para refletir estrutura otimizada e componentes separados
