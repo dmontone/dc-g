@@ -7,6 +7,7 @@
 - [Getting Started](./docs/getting-started.md) - Como rodar e testar a aplicação
 - [Guia de Documentação](./docs/documentation-guide.md) - Como criar e manter documentações
 - [Dependências](./docs/dependencies.md) - Responsabilidades de cada ferramenta do ecossistema
+- [Estrutura do Projeto](./docs/project-structure.md) - Organização detalhada de diretórios e arquivos
 - [Arquitetura 3D](./docs/architecture-3d.md) - ECSY + Three.js + Electron integration
 
 
@@ -23,24 +24,31 @@ DC-G é uma aplicação Electron construída com TypeScript e Vite, seguindo as 
 - **ECS Framework**: ECSY
 - **Linting**: ESLint + Prettier
 
-### Estrutura Básica
+### Estrutura Recomendada
 ```
 dc-g/
 ├── src/
-│   ├── main.ts          # Processo principal
-│   ├── preload.ts       # Script de preload
-│   ├── renderer.ts      # Processo renderer
-│   ├── index.css        # Estilos globais
-│   └── 3d/             # Sistema 3D ECSY + Three.js
-│       ├── World.ts     # Mundo principal
-│       ├── components/  # Componentes ECSY
-│       ├── systems/     # Sistemas ECSY
-│       ├── utils/       # Utilitários 3D
-│       └── assets/      # Assets 3D
-├── docs/                # Documentação detalhada
-├── vite.*.config.ts     # Configurações Vite
-└── forge.config.ts      # Configuração Electron Forge
+│   ├── main/                 # Processo Principal (Node.js)
+│   │   └── main.ts          # Entrada do Electron
+│   ├── renderer/             # Processo de Renderização
+│   │   ├── index.html        # Ponto de entrada HTML
+│   │   ├── index.ts          # Inicialização do app
+│   │   ├── index.css         # Estilos globais
+│   │   ├── core/             # Engine 3D (ECSY + Three.js)
+│   │   │   ├── world.ts      # Mundo ECSY
+│   │   │   └── engine.ts     # Configuração Three.js
+│   │   ├── components/       # Componentes ECSY
+│   │   ├── systems/          # Sistemas ECSY
+│   │   └── assets/           # Assets 3D
+│   ├── preload/              # Script de preload
+│   │   └── preload.ts
+│   └── shared/               # Código compartilhado
+├── docs/                     # Documentação detalhada
+├── assets/                   # Ícones e recursos estáticos
+└── configs/                  # Arquivos de configuração
 ```
+
+> **Nota**: O projeto está em transição da estrutura atual para a recomendada. Veja [Estrutura do Projeto](./docs/project-structure.md) para detalhes completos.
 
 ## 🚀 Começando
 
