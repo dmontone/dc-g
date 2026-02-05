@@ -33,12 +33,12 @@ export class RenderSystem extends System {
       const threeObject = object3D.value
 
       // Gerencia visibilidade
-      threeObject.visible = visible.isVisible()
+      threeObject.visible = visible.value
 
       // Garante que o objeto está na cena
-      if (!threeObject.parent && visible.isVisible()) {
+      if (!threeObject.parent && visible.value) {
         this.scene.add(threeObject)
-      } else if (threeObject.parent && !visible.isVisible()) {
+      } else if (threeObject.parent && !visible.value) {
         this.scene.remove(threeObject)
       }
     })
