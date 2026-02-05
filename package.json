@@ -36,6 +36,9 @@
     "vite": "^5.4.21"
   },
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.1"
+    "@types/three": "^0.182.0",
+    "ecsy": "^0.4.3",
+    "electron-squirrel-startup": "^1.0.1",
+    "three": "^0.182.0"
   }
 }

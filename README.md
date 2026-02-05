@@ -7,6 +7,7 @@
 - [Getting Started](./docs/getting-started.md) - Como rodar e testar a aplicação
 - [Guia de Documentação](./docs/documentation-guide.md) - Como criar e manter documentações
 - [Dependências](./docs/dependencies.md) - Responsabilidades de cada ferramenta do ecossistema
+- [Arquitetura 3D](./docs/architecture-3d.md) - ECSY + Three.js + Electron integration
 
 
 ## 🎯 Visão Geral
@@ -18,6 +19,8 @@ DC-G é uma aplicação Electron construída com TypeScript e Vite, seguindo as 
 - **Linguagem**: TypeScript
 - **Build Tool**: Vite
 - **Bundler**: Electron Forge
+- **3D Engine**: Three.js
+- **ECS Framework**: ECSY
 - **Linting**: ESLint + Prettier
 
 ### Estrutura Básica
@@ -27,7 +30,13 @@ dc-g/
 │   ├── main.ts          # Processo principal
 │   ├── preload.ts       # Script de preload
 │   ├── renderer.ts      # Processo renderer
-│   └── index.css        # Estilos globais
+│   ├── index.css        # Estilos globais
+│   └── 3d/             # Sistema 3D ECSY + Three.js
+│       ├── World.ts     # Mundo principal
+│       ├── components/  # Componentes ECSY
+│       ├── systems/     # Sistemas ECSY
+│       ├── utils/       # Utilitários 3D
+│       └── assets/      # Assets 3D
 ├── docs/                # Documentação detalhada
 ├── vite.*.config.ts     # Configurações Vite
 └── forge.config.ts      # Configuração Electron Forge

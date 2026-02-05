@@ -12,6 +12,8 @@ Este documento detalha as responsabilidades de cada dependência principal no pr
 | **Build Tool** | Compilação TypeScript, hot reload, otimização de bundles | Vite | 5.4.21 |
 | **Bundler** | Empacotamento, distribuição, configurações de build | Electron Forge | 7.11.1 |
 | **Linguagem** | Type safety, interfaces, enums, decorators | TypeScript | 4.5.4 |
+| **3D Engine** | Renderização 3D, geometrias, materiais, câmeras, luzes | Three.js | 0.169.0 |
+| **ECS Framework** | Arquitetura Entity-Component-System, gestão de estado | ECSY | 0.4.2 |
 | **Linting** | Qualidade de código, padrões, formatação | ESLint | 8.57.1 |
 | **Formatação** | Estilo de código, consistência visual | Prettier | - |
 | **Segurança** | Isolamento de contexto, comunicação segura | contextBridge | - |
@@ -102,6 +104,58 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 - Refatoração segura
 - Documentação via tipos
 - Detecção precoce de erros
+
+### 🎨 Three.js (3D Engine)
+
+**Responsabilidades:**
+- **Renderização 3D**: WebGL, canvas, render pipeline
+- **Geometrias**: Meshes, primitivas, modelos 3D
+- **Materiais**: Texturas, shaders, iluminação
+- **Câmeras**: Perspectiva, ortográfica, controles
+- **Luzes**: Ambient, directional, point, spot
+- **Animações**: Keyframes, morph targets, bones
+- **Performance**: Frustum culling, LOD, batching
+
+**Arquivos Relacionados:**
+- `src/3d/World.ts` - Cena principal e renderer
+- `src/3d/components/Object3D.ts` - Componente de objeto Three.js
+- `src/3d/systems/RenderSystem.ts` - Sistema de renderização
+
+**APIs Principais:**
+```typescript
+import * as THREE from 'three'
+import { Scene, Camera, Renderer, Mesh, Geometry, Material } from 'three'
+```
+
+**Integração com Electron:**
+- Roda no renderer process (contexto do navegador)
+- Usa canvas HTML para renderização
+- Acesso via requestAnimationFrame para loop principal
+
+### 🧩 ECSY (ECS Framework)
+
+**Responsabilidades:**
+- **Arquitetura ECS**: Entidades, Componentes, Sistemas
+- **Gestão de Estado**: Component-based data
+- **Sistemas**: Lógica de negócio e atualizações
+- **Queries**: Seleção eficiente de entidades
+- **Performance**: Cache-friendly, data-oriented
+
+**Arquivos Relacionados:**
+- `src/3d/World.ts` - Mundo ECSY + Three.js
+- `src/3d/components/` - Componentes ECSY
+- `src/3d/systems/` - Sistemas ECSY
+- `src/3d/utils/EntityFactory.ts` - Factory de entidades
+
+**APIs Principais:**
+```typescript
+import { World, Entity, Component, System } from 'ecsy'
+```
+
+**Padrão de Uso:**
+- **Entidades**: Objetos do jogo (jogador, inimigos, itens)
+- **Componentes**: Dados (Transform, Visible, Object3D)
+- **Sistemas**: Lógica (TransformSystem, RenderSystem)
 
 ### 🔍 ESLint (Qualidade de Código)
 
