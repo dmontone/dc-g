@@ -6,6 +6,7 @@
 - [Setup Inicial](./docs/setup.md) - Configuração do ambiente de desenvolvimento
 - [Getting Started](./docs/getting-started.md) - Como rodar e testar a aplicação
 - [Guia de Documentação](./docs/documentation-guide.md) - Como criar e manter documentações
+- [Dependências](./docs/dependencies.md) - Responsabilidades de cada ferramenta do ecossistema
 
 
 ## 🎯 Visão Geral
