@@ -29,9 +29,10 @@ dc-g/
 │   │   │   ├── index.ts         # Export centralizado de sistemas
 │   │   │   ├── RenderSystem.ts  # Sincroniza ECSY -> Three.js
 │   │   │   └── TransformSystem.ts
+│   │   ├── factories/           # Factories de entidades ECSY
+│   │   │   ├── index.ts         # Export centralizado de factories
+│   │   │   └── EntityFactory.ts # Factory de entidades 3D
 │   │   └── utils/               # Utilitários do renderer
-│   │       └── utils/
-│   │           └── EntityFactory.ts # Factory de entidades 3D
 │   ├── preload/                 # Script de ponte (Segurança IPC)
 │   │   └── preload.ts
 │   └── shared/                  # Código compartilhado entre processos
@@ -136,6 +137,18 @@ export class Transform {
   // Mouse, teclado, gamepad
   - Mapeamento de ações
   - Eventos de UI
+  ```
+
+#### `src/renderer/factories/`
+Factory pattern para criação de entidades ECSY com configurações padrão.
+
+- **EntityFactory.ts**: Factory principal de entidades 3D
+  ```typescript
+  // Métodos de criação:
+  - createCube()
+  - createSphere()
+  - createEntityWithMesh()
+  - removeEntity()
   ```
 
 #### `src/renderer/assets/`
@@ -364,6 +377,6 @@ Seguir esta estrutura desde o início evitará dores de cabeça futuras e facili
 
 ---
 
-**Atualizado**: 2026-02-05  
-**Versão**: 1.0.0  
+**Atualizado**: 2026-02-06  
+**Versão**: 1.1.0  
 **Autor**: dmont
