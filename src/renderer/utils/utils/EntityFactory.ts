@@ -1,10 +1,10 @@
 import { World, Entity } from 'ecsy'
 import * as THREE from 'three'
-import { Position } from '../components/Position'
-import { Rotation } from '../components/Rotation'
-import { Scale } from '../components/Scale'
-import { Object3D } from '../components/Object3D'
-import { Visible } from '../components/Visible'
+import { Position } from '@/components/Position'
+import { Rotation } from '@/components/Rotation'
+import { Scale } from '@/components/Scale'
+import { Object3D } from '@/components/Object3D'
+import { Visible } from '@/components/Visible'
 
 export class EntityFactory {
   constructor(private world: World, private scene: THREE.Scene) {}
