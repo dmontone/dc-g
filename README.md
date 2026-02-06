@@ -1,4 +1,7 @@
-# DC-G - Electron Application
+# DC-G - Hexagonal 3D Engine
+
+[![Powered by Windsurf](https://img.shields.io/badge/Powered%20by-Windsurf-blue?style=flat-square&logo=windsurf)](https://windsurf.dev)
+[![AI Assistant](https://img.shields.io/badge/AI%20Assistant-SWE--1.5-green?style=flat-square)](https://github.com)
 
 ## Índice
 
@@ -9,20 +12,30 @@
 - [Dependências](./docs/dependencies.md) - Responsabilidades de cada ferramenta do ecossistema
 - [Estrutura do Projeto](./docs/project-structure.md) - Organização detalhada de diretórios e arquivos
 - [Arquitetura 3D](./docs/architecture-3d.md) - ECSY + Three.js + Electron integration
+- [Gestão de Tiles Hexagonais](./docs/tile-management.md) - Sistema completo de tiles hexagonais
 
 
 ## 🎯 Visão Geral
 
-DC-G é uma aplicação Electron construída com TypeScript e Vite, seguindo as melhores práticas de desenvolvimento moderno.
+DC-G é um motor 3D especializado em tiles hexagonais, construído com Electron, TypeScript e integrado com ECSY + Three.js. Desenvolvido com assistência de IA usando Windsurf + SWE-1.5, oferece uma base robusta para jogos e aplicações baseadas em grades hexagonais.
+
+### 🌟 Características Principais
+- **Sistema Hexagonal Completo**: Coordenadas cúbicas, vizinhança, distância e anéis
+- **Renderização 3D Eficiente**: Integração otimizada Three.js + ECSY
+- **Arquitetura ECS**: Componentes e sistemas para máxima flexibilidade
+- **Ferramentas de Desenvolvimento**: Build rápido com Vite, TypeScript strict
+- **Documentação Abrangente**: Guias completos e exemplos de código
 
 ### Stack Principal
 - **Runtime**: Electron 40.1.0
-- **Linguagem**: TypeScript
-- **Build Tool**: Vite
+- **Linguagem**: TypeScript (strict mode)
+- **Build Tool**: Vite (hot reload)
 - **Bundler**: Electron Forge
-- **3D Engine**: Three.js
-- **ECS Framework**: ECSY
+- **3D Engine**: Three.js (WebGL)
+- **ECS Framework**: ECSY (Entity Component System)
+- **Hexagonal Math**: Sistema de coordenadas cúbicas customizado
 - **Linting**: ESLint + Prettier
+- **AI Development**: Windsurf + SWE-1.5
 
 ### Estrutura Recomendada
 ```
@@ -38,7 +51,18 @@ dc-g/
 │   │   │   ├── world.ts      # Mundo ECSY
 │   │   │   └── engine.ts     # Configuração Three.js
 │   │   ├── components/       # Componentes ECSY
+│   │   │   ├── hex/          # Componentes hexagonais
+│   │   │   ├── Color.ts      # Componente de cor
+│   │   │   └── Dirty.ts      # Flag de otimização
 │   │   ├── systems/          # Sistemas ECSY
+│   │   │   ├── hex/          # Sistemas hexagonais
+│   │   │   ├── RenderSystem.ts
+│   │   │   └── TransformSystem.ts
+│   │   ├── factories/        # Factory pattern
+│   │   │   └── EntityFactory.ts
+│   │   ├── utils/           # Utilitários
+│   │   │   ├── hex/         # Sistema hexagonal completo
+│   │   │   └── ColorUtils.ts
 │   │   └── assets/           # Assets 3D
 │   ├── preload/              # Script de preload
 │   │   └── preload.ts
@@ -49,6 +73,40 @@ dc-g/
 ```
 
 > **Nota**: O projeto está em transição da estrutura atual para a recomendada. Veja [Estrutura do Projeto](./docs/project-structure.md) para detalhes completos.
+
+## 🎮 Sistema Hexagonal
+
+### Coordenadas Cúbicas
+O DC-G usa um sistema de coordenadas cúbicas (q, r, s) para representar tiles hexagonais:
+
+```typescript
+interface HexCoordinates {
+  q: number  // Coluna
+  r: number  // Linha  
+  s: number  // Profundidade (-q - r)
+}
+```
+
+### Operações Disponíveis
+- **Vizinhança**: `HexMath.getNeighbors(hex)`
+- **Distância**: `HexMath.getDistance(a, b)`
+- **Anéis**: `HexMath.getRing(center, radius)`
+- **Iteração**: `HexIterationUtils.forEach(width, height, callback)`
+- **Geometria**: `HexGeometryBuilder` para renderização 3D
+
+### Exemplo de Uso
+```typescript
+import { HexMath, HexIterationUtils } from '@/utils/hex'
+
+// Criar grid de tiles
+const tiles = HexIterationUtils.map(10, 10, (hex, q, r) => {
+  return {
+    coordinates: hex,
+    neighbors: HexMath.getNeighbors(hex),
+    distance: HexMath.getDistance(hex, { q: 0, r: 0, s: 0 })
+  }
+})
+```
 
 ## 🚀 Começando
 
@@ -73,8 +131,21 @@ npm run make
 
 ---
 
-**Última atualização**: 2026-02-05  
-**Versão**: 1.0.0  
-**Autor**: dmont
+## 🤖 Desenvolvimento com IA
+
+Este projeto é desenvolvido com assistência de IA usando:
+- **Windsurf**: IDE com capacidades avançadas de desenvolvimento assistido
+- **SWE-1.5**: AI Agent especializado em engenharia de software
+
+### Benefícios
+- Desenvolvimento acelerado com sugestões contextuais
+- Geração automática de documentação
+- Refatoração inteligente e otimizações
+- Debug assistido e resolução de problemas
+
+**Última atualização**: 2026-02-06  
+**Versão**: 1.1.0  
+**Autor**: dmont  
+**Powered by**: Windsurf + SWE-1.5
 
 Para informações detalhadas, consulte os documentos específicos na pasta `docs/`.
