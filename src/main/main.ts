@@ -11,8 +11,7 @@ const createWindow = () => {
     fullscreen: false,
     webPreferences: {
       preload: path.join(__dirname, "preload.js")
-    },
-    skipTaskbar: true
+    }
   })
 
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL)

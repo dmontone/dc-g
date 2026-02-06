@@ -3,7 +3,6 @@ import { RENDER_CONFIG } from './engine.constants'
 
 export class Engine {
   public readonly scene: THREE.Scene
-  public readonly camera: THREE.PerspectiveCamera
   public readonly renderer: THREE.WebGLRenderer
   public readonly container: THREE.Group
 
@@ -13,10 +12,6 @@ export class Engine {
     this.container.rotation.x = -Math.PI / 2
     this.container.rotation.z = -Math.PI / 2
     this.scene.add(this.container)
-
-    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-    this.camera.position.set(5, 5, 10)
-    this.camera.lookAt(0, 0, 0)
 
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: RENDER_CONFIG.antialias })
     this.renderer.setSize(window.innerWidth, window.innerHeight)
@@ -42,9 +37,9 @@ export class Engine {
     this.container.add(directionalLight)
   }
 
-  public render(): void {
-    if (!this.scene || !this.camera) return
-    this.renderer?.render(this.scene, this.camera)
+  public render(camera: THREE.Camera): void {
+    if (!this.scene || !camera) return
+    this.renderer?.render(this.scene, camera)
   }
 
   public dispose(): void { this.renderer.dispose() }
