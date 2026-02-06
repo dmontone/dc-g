@@ -26,6 +26,47 @@ window.electronAPI.loadAsset(path)
 // Não enviar geometrias ou texturas via IPC
 ```
 
+## Engine Three.js
+
+### Configurações Centralizadas
+```typescript
+// engine.constants.ts
+export const RENDER_CONFIG = {
+  antialias: true,
+  pixelRatio: window.devicePixelRatio,
+  shadowMap: true,
+  shadowMapType: THREE.PCFSoftShadowMap
+} as const
+```
+
+### Container-based Scene Organization
+```typescript
+// engine.ts
+export class Engine {
+  public readonly scene: THREE.Scene
+  public readonly camera: THREE.PerspectiveCamera
+  public readonly renderer: THREE.WebGLRenderer
+  public readonly container: THREE.Group  // Novo container para organização
+
+  constructor(canvas: HTMLCanvasElement) {
+    this.scene = new THREE.Scene()
+    this.container = new THREE.Group()
+    this.container.rotation.x = -Math.PI / 2
+    this.container.rotation.z = -Math.PI / 2
+    this.scene.add(this.container)
+    
+    // Câmera reposicionada para melhor visualização
+    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+    this.camera.position.set(5, 5, 10)
+    this.camera.lookAt(0, 0, 0)
+    
+    // Configuração do renderer usando RENDER_CONFIG
+    this.renderer = new THREE.WebGLRenderer({ canvas, antialias: RENDER_CONFIG.antialias })
+    // ...
+  }
+}
+```
+
 ## Estrutura do Loop ECSY + Three.js
 
 ### Fluxo Principal
@@ -43,20 +84,19 @@ graph TD
 - **ECSY**: Gerencia estado (dados)
 - **Three.js**: Gerencia visualização (objetos)
 - **Sistemas**: Fazem a ponte entre os dois
+- **Container**: Organização espacial da cena via Engine.container
 
 ### Componentes de Sincronização
 ```typescript
-// ECSY Component
-class Transform {
-  position: Vector3
-  rotation: Euler
-  scale: Vector3
-}
+// ECSY Components (com imports centralizados)
+import { Position, Rotation, Scale, Object3D } from '@/components'
 
 // Three.js Object
 const mesh = new THREE.Mesh()
 
-// Sistema de Sincronização
+// Sistema de Sincronização (com imports centralizados)
+import { TransformSystem } from '@/systems'
+
 class TransformSystem {
   execute() {
     // Copia dados do ECSY para Three.js
@@ -142,23 +182,27 @@ class EntityFactory {
 ## Estrutura de Diretórios 3D
 
 ```
-src/3d/
-├── World.ts              # Mundo principal (ECSY + Three.js)
-├── components/           # Componentes ECSY
-│   ├── Position.ts       # Posição 3D
-│   ├── Rotation.ts       # Rotação 3D
-│   ├── Scale.ts          # Escala 3D
-│   ├── Object3D.ts       # Referência Three.js
-│   └── Visible.ts        # Controle de visibilidade
-├── systems/              # Sistemas ECSY
-│   ├── TransformSystem.ts # Sincronização de transform
-│   └── RenderSystem.ts   # Gerenciamento de renderização
-├── utils/                # Utilitários
-│   └── EntityFactory.ts  # Factory de entidades
-└── assets/               # Assets 3D
-    ├── models/           # Modelos 3D (.glb, .gltf)
-    ├── textures/         # Texturas (.jpg, .png)
-    └── materials/        # Materiais personalizados
+src/renderer/
+├── core/
+│   ├── engine.ts              # Engine Three.js principal
+│   ├── engine.constants.ts    # Configurações do renderer
+│   └── world.ts               # Mundo ECSY + Three.js
+├── components/               # Componentes ECSY
+│   ├── index.ts              # Export centralizado de componentes
+│   ├── Position.ts           # Posição 3D
+│   ├── Rotation.ts           # Rotação 3D
+│   ├── Scale.ts              # Escala 3D
+│   ├── Object3D.ts           # Referência Three.js
+│   └── Visible.ts            # Controle de visibilidade
+├── systems/                  # Sistemas ECSY
+│   ├── index.ts              # Export centralizado de sistemas
+│   ├── TransformSystem.ts    # Sincronização de transform
+│   └── RenderSystem.ts       # Gerenciamento de renderização
+├── utils/
+│   └── utils/
+│       └── EntityFactory.ts  # Factory de entidades
+├── index.html                # HTML principal do renderer
+└── index.ts                  # Ponto de entrada do renderer
 ```
 
 ## Padrões de Uso
@@ -169,7 +213,9 @@ src/3d/
 const cube = entityFactory.createCube({ x: 0, y: 0, z: 0 }, 1, 0x00ff00)
 const sphere = entityFactory.createSphere({ x: 2, y: 0, z: 0 }, 0.5, 0xff0000)
 
-// Manualmente
+// Manualmente com imports centralizados
+import { Position, Rotation, Scale, Object3D, Visible } from '@/components'
+
 const entity = world.createEntity()
 entity.addComponent(Position)
 entity.addComponent(Rotation)
@@ -180,6 +226,9 @@ entity.addComponent(Visible)
 
 ### Sistemas Personalizados
 ```typescript
+import { System } from 'ecsy'
+import { RenderSystem, TransformSystem } from '@/systems'
+
 class MovementSystem extends System {
   static queries = {
     movable: { components: [Position, Velocity] }
@@ -193,6 +242,9 @@ class MovementSystem extends System {
     })
   }
 }
+
+// Registro no World
+world.registerSystem(MovementSystem)
 ```
 
 ### Componentes Customizados
@@ -272,7 +324,14 @@ class PerformanceMonitor {
 
 ---
 
-**Última atualização**: 2026-02-05  
-**Versão**: 1.0.0  
-**Revisão**: Próxima revisão em 2026-05-05  
-**Mudanças**: Atualizada estrutura de componentes para Position, Rotation, Scale separados
+**Última atualização**: 2026-02-06  
+**Versão**: 1.1.0  
+**Revisão**: Próxima revisão em 2026-05-06  
+**Mudanças**: 
+- Restruturado engine com container-based scene organization
+- Movido RENDER_CONFIG para arquivo de constantes dedicado
+- Adicionados exports centralizados em components/index.ts e systems/index.ts
+- Atualizada estrutura de diretórios para src/renderer/
+- Melhorada organização de imports com path aliases (@/components, @/systems)
+- Simplificados métodos de renderização e dispose
+- Reposicionada câmera para melhor visualização 3D

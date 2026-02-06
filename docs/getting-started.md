@@ -39,10 +39,19 @@ contextBridge.exposeInMainWorld("electronAPI", {
 })
 ```
 
-### 3. Renderer Process (`src/renderer.ts`)
+### 3. Renderer Process (`src/renderer/index.ts`)
 ```typescript
-import './index.css'
-console.log('👋 This message is being logged by "renderer.ts"')
+import './index.html'
+import { World } from './core/world'
+import { Engine } from './core/engine'
+
+console.log('👋 This message is being logged by "renderer/index.ts"')
+
+// Inicialização do mundo 3D
+const canvas = document.querySelector('canvas')!
+const engine = new Engine(canvas)
+const world = new World(engine)
+world.start()
 ```
 
 ## Desenvolvimento Interativo
@@ -50,6 +59,7 @@ console.log('👋 This message is being logged by "renderer.ts"')
 ### Hot Reload
 - O Vite automaticamente recarrega o renderer quando você salva
 - Para mudanças no main/preload, reinicie com `npm start`
+- A estrutura 3D está em `src/renderer/` com imports centralizados
 
 ### Debug Tools
 ```typescript
@@ -120,10 +130,11 @@ npx prettier --write . # Formata código
 
 ## Próximos Passos
 
-1. **Explore a estrutura**: Leia [Estrutura do Projeto](./structure.md)
-2. **Configure o estilo**: Veja [Guia de Estilo](./style-guide.md)
-3. **Entenda a arquitetura**: Consulte [Arquitetura](./architecture.md)
-4. **Adicione funcionalidades**: Veja [APIs e Comunicação](./api.md)
+1. **Explore a estrutura**: Leia [Arquitetura 3D](./architecture-3d.md)
+2. **Entenda os componentes**: Veja `src/renderer/components/`
+3. **Entenda os sistemas**: Veja `src/renderer/systems/`
+4. **Configure o estilo**: Veja [Guia de Estilo](./style-guide.md)
+5. **Adicione funcionalidades**: Veja [APIs e Comunicação](./api.md)
 
 ## Dicas de Desenvolvimento
 

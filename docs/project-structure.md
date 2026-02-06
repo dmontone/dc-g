@@ -14,25 +14,24 @@ dc-g/
 │   ├── renderer/                 # Processo de Renderização (Onde a mágica acontece)
 │   │   ├── index.html           # Ponto de entrada HTML
 │   │   ├── index.ts             # Inicializa o app e o loop do ECSY
-│   │   ├── index.css            # Estilos globais
 │   │   ├── core/                # Engine e configuração do ECSY
 │   │   │   ├── world.ts         # Instância do ECSY World
-│   │   │   └── engine.ts        # Setup do Three.js (Scene, Renderer, Camera)
+│   │   │   ├── engine.ts        # Setup do Three.js (Scene, Renderer, Camera)
+│   │   │   └── engine.constants.ts # Configurações centralizadas do renderer
 │   │   ├── components/          # Componentes do ECSY (Dados puros)
-│   │   │   ├── Transform.ts
-│   │   │   ├── MeshTag.ts
-│   │   │   ├── Position.ts
-│   │   │   ├── Rotation.ts
-│   │   │   ├── Scale.ts
-│   │   │   └── Visible.ts
+│   │   │   ├── index.ts         # Export centralizado de componentes
+│   │   │   ├── Object3D.ts      # Referência Three.js
+│   │   │   ├── Position.ts      # Posição 3D
+│   │   │   ├── Rotation.ts      # Rotação 3D
+│   │   │   ├── Scale.ts         # Escala 3D
+│   │   │   └── Visible.ts       # Controle de visibilidade
 │   │   ├── systems/             # Sistemas do ECSY (Lógica)
-│   │   │   ├── MovementSystem.ts
+│   │   │   ├── index.ts         # Export centralizado de sistemas
 │   │   │   ├── RenderSystem.ts  # Sincroniza ECSY -> Three.js
 │   │   │   └── TransformSystem.ts
-│   │   └── assets/              # Modelos 3D, Texturas, Shaders
-│   │       ├── models/
-│   │       ├── textures/
-│   │       └── shaders/
+│   │   └── utils/               # Utilitários do renderer
+│   │       └── utils/
+│   │           └── EntityFactory.ts # Factory de entidades 3D
 │   ├── preload/                 # Script de ponte (Segurança IPC)
 │   │   └── preload.ts
 │   └── shared/                  # Código compartilhado entre processos
