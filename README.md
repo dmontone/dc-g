@@ -52,17 +52,14 @@ dc-g/
 │   │   │   └── engine.ts     # Configuração Three.js
 │   │   ├── components/       # Componentes ECSY
 │   │   │   ├── hex/          # Componentes hexagonais
-│   │   │   ├── Color.ts      # Componente de cor
-│   │   │   └── Dirty.ts      # Flag de otimização
+│   │   │   └── core/         # Componentes básicos
 │   │   ├── systems/          # Sistemas ECSY
 │   │   │   ├── hex/          # Sistemas hexagonais
-│   │   │   ├── RenderSystem.ts
-│   │   │   └── TransformSystem.ts
+│   │   │   └── core/         # Sistemas principais
 │   │   ├── factories/        # Factory pattern
-│   │   │   └── EntityFactory.ts
 │   │   ├── utils/           # Utilitários
 │   │   │   ├── hex/         # Sistema hexagonal completo
-│   │   │   └── ColorUtils.ts
+│   │   │   └── core/        # Utilitários gerais
 │   │   └── assets/           # Assets 3D
 │   ├── preload/              # Script de preload
 │   │   └── preload.ts
@@ -76,37 +73,14 @@ dc-g/
 
 ## 🎮 Sistema Hexagonal
 
-### Coordenadas Cúbicas
-O DC-G usa um sistema de coordenadas cúbicas (q, r, s) para representar tiles hexagonais:
+O DC-G implementa um sistema completo de tiles hexagonais usando coordenadas cúbicas, permitindo:
 
-```typescript
-interface HexCoordinates {
-  q: number  // Coluna
-  r: number  // Linha  
-  s: number  // Profundidade (-q - r)
-}
-```
+- **Navegação Eficiente**: Movimento natural em 6 direções
+- **Cálculos de Distância**: Algoritmos otimizados para pathfinding
+- **Renderização 3D**: Geração automática de geometria hexagonal
+- **Iteração de Grid**: Operações em massa sobre grades hexagonais
 
-### Operações Disponíveis
-- **Vizinhança**: `HexMath.getNeighbors(hex)`
-- **Distância**: `HexMath.getDistance(a, b)`
-- **Anéis**: `HexMath.getRing(center, radius)`
-- **Iteração**: `HexIterationUtils.forEach(width, height, callback)`
-- **Geometria**: `HexGeometryBuilder` para renderização 3D
-
-### Exemplo de Uso
-```typescript
-import { HexMath, HexIterationUtils } from '@/utils/hex'
-
-// Criar grid de tiles
-const tiles = HexIterationUtils.map(10, 10, (hex, q, r) => {
-  return {
-    coordinates: hex,
-    neighbors: HexMath.getNeighbors(hex),
-    distance: HexMath.getDistance(hex, { q: 0, r: 0, s: 0 })
-  }
-})
-```
+Para detalhes completos da API e exemplos de uso, consulte [Gestão de Tiles Hexagonais](./docs/tile-management.md).
 
 ## 🚀 Começando
 
