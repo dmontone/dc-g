@@ -1,3 +1,5 @@
 export * from './RenderSystem'
 export * from './TransformSystem'
+export * from './InputSystem'
+export * from './InputTestSystem'
 export * from './hex'
