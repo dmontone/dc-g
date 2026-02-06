@@ -42,8 +42,8 @@ export class HexMeshSystem extends System {
     const height = maxR + 1
     const size = 1.0
 
-    this.geometryBuilder = new HexGeometryBuilder({ size, width, height })
-    this.material = new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.FrontSide })
+    this.geometryBuilder = new HexGeometryBuilder({ size, width, height, centered: true, centerTile: { q: 0, r: 0 } })
+    this.material = new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.DoubleSide, wireframe: true })
     
     this.mesh = new THREE.Mesh(this.geometryBuilder.getGeometry(), this.material)
     this.mesh.position.set(0, 0, 0)

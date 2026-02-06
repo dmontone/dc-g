@@ -11,6 +11,7 @@ export class HexGeometryBuilder {
   private vertices: number[]
   private indices: number[]
   private colors: number[]
+  private centerOffset: { x: number, y: number, z: number }
 
   constructor(config: HexGeometryConfig) {
     this.config = config
@@ -18,7 +19,39 @@ export class HexGeometryBuilder {
     this.indices = []
     this.colors = []
     this.geometry = new THREE.BufferGeometry()
+    this.centerOffset = this.calculateCenterOffset()
     this.buildGeometry()
+  }
+
+  private calculateCenterOffset(): { x: number, y: number, z: number } {
+    if (!this.config.centered) {
+      return { x: 0, y: 0, z: 0 }
+    }
+
+    const centerTile = this.config.centerTile || { q: 0, r: 0 }
+    
+    // Calcular o centro do grid em coordenadas hexagonais
+    const gridCenterQ = (this.config.width - 1) / 2
+    const gridCenterR = (this.config.height - 1) / 2
+    
+    // Calcular a posição do centro do grid em coordenadas cartesianas
+    const gridCenterPosition = HexCoordinateConverter.hexToCartesian(
+      { q: gridCenterQ, r: gridCenterR, s: -gridCenterQ - gridCenterR },
+      this.config.size
+    )
+    
+    // Calcular a posição do tile que deve ficar no centro
+    const targetCenterPosition = HexCoordinateConverter.hexToCartesian(
+      { q: centerTile.q, r: centerTile.r, s: -centerTile.q - centerTile.r },
+      this.config.size
+    )
+
+    // O offset é a diferença entre onde o centro do grid está e onde deveria estar
+    return {
+      x: -gridCenterPosition.x,
+      y: -gridCenterPosition.y,
+      z: 0
+    }
   }
 
   private buildGeometry(): void {
@@ -28,7 +61,7 @@ export class HexGeometryBuilder {
   }
 
   private addHexagon(hex: HexCoordinates): void {
-    const center = HexCoordinateConverter.hexToCartesian(hex, this.config.size)
+    const center = HexCoordinateConverter.hexToCartesian(hex, this.config.size, this.centerOffset)
     const hexVertices = HexCoordinateConverter.getHexVertices(center, this.config.size)
     const vertexStart = this.vertices.length / 3
 

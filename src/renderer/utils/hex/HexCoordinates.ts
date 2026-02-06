@@ -1,10 +1,10 @@
 import { HexCoordinates, CartesianCoordinates } from './HexCoordinates.types'
 
 export class HexCoordinateConverter {
-  static hexToCartesian(hex: HexCoordinates, size: number = 1): CartesianCoordinates {
-    const x = size * (3/2 * hex.q)
-    const y = size * (Math.sqrt(3)/2 * hex.q + Math.sqrt(3) * hex.r)
-    const z = 0
+  static hexToCartesian(hex: HexCoordinates, size: number = 1, centerOffset: CartesianCoordinates = { x: 0, y: 0, z: 0 }): CartesianCoordinates {
+    const x = size * (3/2 * hex.q) + centerOffset.x
+    const y = size * (Math.sqrt(3)/2 * hex.q + Math.sqrt(3) * hex.r) + centerOffset.y
+    const z = centerOffset.z
     
     return { x, y, z }
   }
