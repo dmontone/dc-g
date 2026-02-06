@@ -13,6 +13,7 @@
 - [Estrutura do Projeto](./docs/project-structure.md) - Organização detalhada de diretórios e arquivos
 - [Arquitetura 3D](./docs/architecture-3d.md) - ECSY + Three.js + Electron integration
 - [Gestão de Tiles Hexagonais](./docs/tile-management.md) - Sistema completo de tiles hexagonais
+- [Sistema de Entrada](./docs/input-system.md) - Gerenciamento de teclado, mouse e scroll
 
 
 ## 🎯 Visão Geral
