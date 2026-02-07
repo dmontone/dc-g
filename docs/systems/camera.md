@@ -65,33 +65,25 @@ target.value.set(5, 0, 0);
 
 ### Acessando a câmera ativa
 ```typescript
-const activeCamera = CameraManager.getActiveCamera();
-if (activeCamera) {
-  // Usar a câmera ativa
-  renderer.render(scene, activeCamera);
+// Obter a entidade da câmera ativa
+const cameraEntity = world.getSystem(CameraSystem)?.queries.cameras.results[0];
+
+if (cameraEntity) {
+  const cameraComponent = cameraEntity.getComponent(CameraComponent);
+  const activeCamera = cameraComponent?.instance;
+  
+  if (activeCamera) {
+    // Usar a câmera ativa
+    renderer.render(scene, activeCamera);
+  }
 }
-```
-
-## Gerenciamento de Estado
-
-### CameraManager
-O `CameraManager` é um singleton que fornece acesso global à câmera ativa e notifica os ouvintes quando a câmera ativa muda.
-
-```typescript
-// Adicionar um listener para mudanças na câmera ativa
-const unsubscribe = CameraManager.onCameraChanged((camera) => {
-  console.log('Câmera ativa mudou:', camera);
-});
-
-// Remover o listener quando não for mais necessário
-unsubscribe();
 ```
 
 ## Boas Práticas
 
 1. **Sempre use os componentes** para modificar a posição e o alvo da câmera, em vez de modificar diretamente a instância do THREE.PerspectiveCamera.
 
-2. **Use o CameraManager** para acessar a câmera ativa em vez de acessar diretamente a entidade da câmera.
+2. **Use o CameraSystem** para acessar a câmera ativa em vez de acessar diretamente a entidade da câmera.
 
 3. **Atualize o aspect ratio** quando a janela for redimensionada. O `CameraSystem` já inclui um `ResizeObserver` para isso.
 
@@ -134,7 +126,10 @@ function animate() {
   world.execute(1/60);
   
   // Obter a câmera ativa e renderizar
-  const camera = CameraManager.getActiveCamera();
+  const cameraEntity = world.getSystem(CameraSystem)?.queries.cameras.results[0];
+  const cameraComponent = cameraEntity?.getComponent(CameraComponent);
+  const camera = cameraComponent?.instance;
+  
   if (camera) {
     renderer.render(scene, camera);
   }
