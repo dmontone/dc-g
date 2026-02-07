@@ -3,31 +3,36 @@ import * as THREE from 'three'
 
 /**
  * Componente que define uma entidade como uma câmera no mundo do jogo.
+ * Configurado para OrthographicCamera (estilo League of Legends).
  * 
- * @property {number} fov - Campo de visão em graus (padrão: 75)
- * @property {number} near - Plano próximo de recorte (padrão: 0.1)
- * @property {number} far - Plano distante de recorte (padrão: 1000)
- * @property {number} zoom - Nível de zoom (padrão: 1)
- * @property {number} aspect - Proporção da tela (largura/altura)
- * @property {THREE.PerspectiveCamera} [instance] - Instância da câmera THREE.js (gerenciada internamente)
+ * @property {number} left - Plano esquerdo do frustum
+ * @property {number} right - Plano direito do frustum
+ * @property {number} top - Plano superior do frustum
+ * @property {number} bottom - Plano inferior do frustum
+ * @property {number} near - Plano próximo de recorte
+ * @property {number} far - Plano distante de recorte
+ * @property {number} zoom - Nível de zoom
+ * @property {THREE.OrthographicCamera} [instance] - Instância da câmera THREE.js (gerenciada internamente)
  */
 export class CameraComponent extends Component<CameraComponent> {
-  fov!: number
+  left!: number
+  right!: number
+  top!: number
+  bottom!: number
   near!: number
   far!: number
   zoom!: number
-  aspect!: number
   
-  // Esta propriedade será gerenciada pelo sistema
-  instance?: THREE.PerspectiveCamera
+  instance?: THREE.OrthographicCamera
   
   static schema = {
-    fov: { type: Types.Number, default: 10 },
-    near: { type: Types.Number, default: 0.1 },
-    far: { type: Types.Number, default: 1000 },
-    zoom: { type: Types.Number, default: 0.5 },
-    aspect: { type: Types.Number, default: window.innerWidth / window.innerHeight },
-    // instance não é serializado no schema
+    left: { type: Types.Number, default: -20 },
+    right: { type: Types.Number, default: 20 },
+    top: { type: Types.Number, default: 15 },
+    bottom: { type: Types.Number, default: -15 },
+    near: { type: Types.Number, default: 1 },
+    far: { type: Types.Number, default: 2000 },
+    zoom: { type: Types.Number, default: 1 },
   } as const
   
   static isComponent = true as const

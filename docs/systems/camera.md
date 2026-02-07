@@ -1,19 +1,21 @@
 # Sistema de Câmera
 
 ## Visão Geral
-O sistema de câmera é implementado usando o padrão ECS (Entity-Component-System) e fornece uma maneira flexível de gerenciar câmeras 3D no jogo. O sistema é construído em cima do THREE.js e é integrado ao ECSY.
+O sistema de câmera é implementado usando o padrão ECS (Entity-Component-System) e fornece uma maneira flexível de gerenciar câmeras 3D no jogo. O sistema é construído em cima do THREE.js e é integrado ao ECSY. **Configurado para OrthographicCamera (estilo League of Legends)**.
 
 ## Componentes
 
 ### CameraComponent
 ```typescript
 {
-  fov: number;      // Campo de visão em graus
-  aspect: number;   // Proporção da tela (largura/altura)
+  left: number;     // Plano esquerdo do frustum
+  right: number;    // Plano direito do frustum
+  top: number;      // Plano superior do frustum
+  bottom: number;   // Plano inferior do frustum
   near: number;     // Plano de recorte próximo
   far: number;      // Plano de recorte distante
   zoom: number;     // Nível de zoom
-  instance?: THREE.PerspectiveCamera; // Instância THREE.js interna
+  instance?: THREE.OrthographicCamera; // Instância THREE.js interna
 }
 ```
 
@@ -31,20 +33,22 @@ O `CameraSystem` é responsável por:
 1. Gerenciar o ciclo de vida da câmera
 2. Atualizar as propriedades da câmera quando os componentes mudam
 3. Lidar com o redimensionamento da janela
-4. Manter a instância do THREE.PerspectiveCamera sincronizada com os componentes ECS
+4. Manter a instância do THREE.OrthographicCamera sincronizada com os componentes ECS
 
 ## Uso
 
 ### Criando uma câmera
 ```typescript
 const cameraEntity = world.createEntity()
-  .addComponent(Position, { value: new THREE.Vector3(5, 5, 10) })
+  .addComponent(Position, { value: new THREE.Vector3(8, 20, 8) })
   .addComponent(CameraTarget, { value: new THREE.Vector3(0, 0, 0) })
   .addComponent(CameraComponent, {
-    fov: 75,
-    aspect: window.innerWidth / window.innerHeight,
-    near: 0.1,
-    far: 1000,
+    left: -20,
+    right: 20,
+    top: 15,
+    bottom: -15,
+    near: 1,
+    far: 2000,
     zoom: 1
   });
 ```
@@ -81,17 +85,17 @@ if (cameraEntity) {
 
 ## Boas Práticas
 
-1. **Sempre use os componentes** para modificar a posição e o alvo da câmera, em vez de modificar diretamente a instância do THREE.PerspectiveCamera.
+1. **Sempre use os componentes** para modificar a posição e o alvo da câmera, em vez de modificar diretamente a instância do THREE.OrthographicCamera.
 
 2. **Use o CameraSystem** para acessar a câmera ativa em vez de acessar diretamente a entidade da câmera.
 
-3. **Atualize o aspect ratio** quando a janela for redimensionada. O `CameraSystem` já inclui um `ResizeObserver` para isso.
+3. **O redimensionamento da janela** é automático. O `CameraSystem` já inclui um `ResizeObserver` que ajusta o frustum baseado no aspect ratio.
 
 4. **Evite múltiplas câmeras ativas** - O sistema foi projetado para ter apenas uma câmera ativa por vez.
 
 ## Limitações Conhecidas
 
-- O sistema atualmente suporta apenas câmeras do tipo `PerspectiveCamera`.
+- O sistema atualmente suporta apenas câmeras do tipo `OrthographicCamera`.
 - Não há suporte nativo para transições suaves entre posições/alvos da câmera (deve ser implementado em um sistema separado).
 
 ## Exemplo Completo
@@ -108,13 +112,15 @@ world.registerSystem(CameraSystem);
 
 // Criar a câmera
 const cameraEntity = world.createEntity()
-  .addComponent(Position, { value: new THREE.Vector3(5, 5, 10) })
+  .addComponent(Position, { value: new THREE.Vector3(8, 20, 8) })
   .addComponent(CameraTarget, { value: new THREE.Vector3(0, 0, 0) })
   .addComponent(CameraComponent, {
-    fov: 75,
-    aspect: window.innerWidth / window.innerHeight,
-    near: 0.1,
-    far: 1000,
+    left: -20,
+    right: 20,
+    top: 15,
+    bottom: -15,
+    near: 1,
+    far: 2000,
     zoom: 1
   });
 

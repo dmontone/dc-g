@@ -2,11 +2,13 @@ import { CameraConfig } from './Camera.types'
 import * as THREE from 'three'
 
 export const CAMERA_DEFAULTS: CameraConfig = {
-  position: new THREE.Vector3(5, 5, 10),
+  position: new THREE.Vector3(8, 20, 8),
   target: new THREE.Vector3(0, 0, 0),
-  fov: 75,
-  near: 0.1,
-  far: 1000,
-  aspect: window.innerWidth / window.innerHeight,
+  left: -20,
+  right: 20,
+  top: 15,
+  bottom: -15,
+  near: 1,
+  far: 2000,
   zoom: 1
 }

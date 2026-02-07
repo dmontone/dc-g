@@ -1,6 +1,5 @@
 export * from './RenderSystem'
 export * from './TransformSystem'
-export * from './InputSystem'
-export * from './InputTestSystem'
+export * from './Input'
 export * from './CameraSystem'
 export * from './hex'

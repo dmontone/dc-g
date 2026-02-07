@@ -40,7 +40,7 @@ export class CameraSystem extends System {
     
     if (component.instance) return
 
-    const camera = new THREE.PerspectiveCamera(component.fov, component.aspect, component.near, component.far)
+    const camera = new THREE.OrthographicCamera(component.left, component.right, component.top, component.bottom, component.near, component.far)
     camera.position.copy(position.value)
     camera.lookAt(target.value)
     camera.zoom = component.zoom
@@ -58,15 +58,15 @@ export class CameraSystem extends System {
     const cameraComp = entity.getComponent(CameraComponent)!
     if (!cameraComp.instance) return
 
-    const { fov, near, far, zoom, aspect } = cameraComp
-    const camera = cameraComp.instance as THREE.PerspectiveCamera
+    const { left, right, top, bottom, near, far, zoom } = cameraComp
+    const camera = cameraComp.instance as THREE.OrthographicCamera
 
-    const needsUpdate = Object.entries({ fov, near, far, zoom, aspect }).some(([prop, value]) => 
+    const needsUpdate = Object.entries({ left, right, top, bottom, near, far, zoom }).some(([prop, value]) => 
       camera[prop as keyof typeof camera] !== value
     )
 
     if (needsUpdate) {
-      Object.assign(camera, { fov, near, far, zoom, aspect })
+      Object.assign(camera, { left, right, top, bottom, near, far, zoom })
       camera.updateProjectionMatrix()
     }
   }
@@ -84,11 +84,12 @@ export class CameraSystem extends System {
 
       const { width, height } = entry.contentRect
       const aspect = width / height
-
-      if (Math.abs(component.aspect - aspect) > 0.0001) {
-        component.aspect = aspect
-        this.updateCamera(entity)
-      }
+      const scale = 20 // Base scale for the orthographic camera
+      
+      component.left = -scale * aspect
+      component.right = scale * aspect
+      component.top = scale
+      component.bottom = -scale
     })
 
     const canvas = document.querySelector('canvas')
