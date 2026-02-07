@@ -1,8 +1,7 @@
 import { System, World } from 'ecsy'
 import { Manager } from '@/core/input'
-import { KeyboardState, MouseCoord, MouseDelta, MouseButtons, MouseWheel } from '@/components/input'
-import type { InputQueryName, InputComponentType } from './InputSystem.types'
-import { InputComponentClass } from './InputSystem.types'
+import { KeyboardState, MouseCoord, MouseDelta, MouseButtons } from '@/components/input'
+import { InputQueryName, InputComponentClass, InputComponentType } from './InputSystem.types'
 
 export class InputSystem extends System {
   private inputManager: Manager
@@ -37,6 +36,7 @@ export class InputSystem extends System {
 
       mouseDelta.x = x - this.previousMouseX
       mouseDelta.y = y - this.previousMouseY
+      mouseDelta.hasMovement = (mouseDelta.x !== 0 || mouseDelta.y !== 0)
       mouseCoord.x = x
       mouseCoord.y = y
       this.previousMouseX = x
@@ -53,10 +53,6 @@ export class InputSystem extends System {
       const mouseButtons = this.getMouseButtons()
       mouseButtons?.buttons && 
         (mouseButtons.buttons.set(button, false), mouseButtons.justReleased?.add(button))
-    }
-
-    this.inputManager.onWheel = (delta) => {
-      this.getMouseWheel() && (this.getMouseWheel()!.delta = delta)
     }
   }
 
@@ -82,30 +78,26 @@ export class InputSystem extends System {
     return this.getInputComponent('mouseButtons')
   }
 
-  private getMouseWheel(): MouseWheel | null {
-    return this.getInputComponent('mouseWheel')
-  }
-
   execute(): void {
     const keyboardState = this.getKeyboardState()
     const mouseButtons = this.getMouseButtons()
     const mouseDelta = this.getMouseDelta()
-    const mouseWheel = this.getMouseWheel()
 
     keyboardState?.justPressed?.clear()
     keyboardState?.justReleased?.clear()
     mouseButtons?.justPressed?.clear()
     mouseButtons?.justReleased?.clear()
-    mouseDelta && (mouseDelta.x = mouseDelta.y = 0)
-    mouseWheel && (mouseWheel.delta = 0)
+    if (mouseDelta) {
+      mouseDelta.x = mouseDelta.y = 0
+      mouseDelta.hasMovement = false
+    }
   }
 
   static queries = {
     keyboardState: { components: [KeyboardState], listen: { added: true, removed: true } },
     mouseCoord: { components: [MouseCoord] },
     mouseDelta: { components: [MouseDelta] },
-    mouseButtons: { components: [MouseButtons] },
-    mouseWheel: { components: [MouseWheel] }
+    mouseButtons: { components: [MouseButtons] }
   }
 
   public dispose(): void {

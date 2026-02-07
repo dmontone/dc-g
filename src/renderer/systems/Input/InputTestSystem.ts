@@ -1,5 +1,5 @@
 import { System } from 'ecsy'
-import { KeyboardState, MouseCoord, MouseDelta, MouseButtons, MouseWheel } from '@/components/input'
+import { KeyboardState, MouseCoord, MouseDelta, MouseButtons } from '@/components/input'
 
 export class InputTestSystem extends System {
   private consoleElement: HTMLElement | null = null
@@ -33,9 +33,8 @@ export class InputTestSystem extends System {
     const mouseCoord = this.getMouseCoord()
     const mouseDelta = this.getMouseDelta()
     const mouseButtons = this.getMouseButtons()
-    const mouseWheel = this.getMouseWheel()
     
-    if (!keyboardState || !mouseCoord || !mouseDelta || !mouseButtons || !mouseWheel || !this.consoleElement) return
+    if (!keyboardState || !mouseCoord || !mouseDelta || !mouseButtons || !this.consoleElement) return
 
     // Get input information
     const pressedKeys = Array.from(keyboardState.keys.keys()).filter(key => keyboardState.keys.get(key))
@@ -58,14 +57,13 @@ export class InputTestSystem extends System {
       <div style="margin-top: 5px;">
         <div style="color: #ff0;">Mouse:</div>
         <div>Position: (${Math.round(mouseCoord.x)}, ${Math.round(mouseCoord.y)})</div>
-        <div>Delta: (${Math.round(mouseDelta.x)}, ${Math.round(mouseDelta.y)})</div>
+        <div>Delta: (${Math.round(mouseDelta.x)}, ${Math.round(mouseDelta.y)}) ${mouseDelta.hasMovement ? '<span style="color: #0f0;">[MOVING]</span>' : '<span style="color: #888;">[IDLE]</span>'}</div>
         <div>Buttons: [${pressedButtons.join(', ')}]</div>
         ${justPressedButtons.length > 0 ? `<div style="color: #0f0;">Just Pressed: [${justPressedButtons.join(', ')}]</div>` : ''}
         ${justReleasedButtons.length > 0 ? `<div style="color: #f00;">Just Released: [${justReleasedButtons.join(', ')}]</div>` : ''}
-        ${mouseWheel.delta !== 0 ? `<div style="color: #00f;">Wheel: ${mouseWheel.delta}</div>` : ''}
       </div>
       <div style="margin-top: 5px; font-size: 10px; color: #888;">
-        WASD to move • Click to test • Scroll to test wheel
+        WASD to move • Click to test
       </div>
     `
   }
@@ -90,11 +88,6 @@ export class InputTestSystem extends System {
     return entities.length > 0 ? entities[0].getComponent(MouseButtons) : null
   }
 
-  private getMouseWheel(): MouseWheel | null {
-    const entities = this.queries.mouseWheel.results
-    return entities.length > 0 ? entities[0].getComponent(MouseWheel) : null
-  }
-
   static queries = {
     keyboardState: {
       components: [KeyboardState]
@@ -108,9 +101,6 @@ export class InputTestSystem extends System {
     mouseButtons: {
       components: [MouseButtons]
     },
-    mouseWheel: {
-      components: [MouseWheel]
-    }
   }
 
   public dispose(): void {
