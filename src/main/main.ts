@@ -1,6 +1,6 @@
 import path from "node:path"
 import started from "electron-squirrel-startup"
-import { app, BrowserWindow } from "electron"
+import { app, BrowserWindow, session } from "electron"
 
 if (started) app.quit()
 
