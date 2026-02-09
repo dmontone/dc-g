@@ -1,8 +1,11 @@
 import { World as ECSYWorld } from 'ecsy'
 import { RendererComponent, SceneComponent } from '@/components'
-import { SceneSystem, RendererSystem, CleanupSystem } from '@/systems'
+import { SceneSystem, RendererSystem, CleanupSystem, CameraSystem, RenderSystem } from '@/systems'
 import * as EntityFactory from '@/entities'
-import { DirtyTag } from '@/components/tags'
+import * as TagComponents from '@/components/tags'
+import { CameraInstanceComponent, OrthographicConfig } from './components/camera'
+import { CameraPositionComponent } from './components/camera/position'
+import { CameraTargetComponent } from './components/camera/target'
 
 export class World {
   constructor(
@@ -16,11 +19,15 @@ export class World {
 
   private registerComponents() {
     console.log('Registering tag components...')
-    this.world.registerComponent<DirtyTag>(DirtyTag)
-    
+    Object.values(TagComponents).forEach(TagComponent =>this.world.registerComponent(TagComponent))
+
     console.log('Registering scene components...')
     this.world.registerComponent<SceneComponent>(SceneComponent)
     this.world.registerComponent<RendererComponent>(RendererComponent)
+    this.world.registerComponent<CameraInstanceComponent>(CameraInstanceComponent)
+    this.world.registerComponent<CameraPositionComponent>(CameraPositionComponent)
+    this.world.registerComponent<CameraTargetComponent>(CameraTargetComponent)
+    this.world.registerComponent<OrthographicConfig>(OrthographicConfig)
 
     console.log('Components registered!')
   }
@@ -29,6 +36,7 @@ export class World {
     console.log('Registering general entities...')
     EntityFactory.scene(this.world)
     EntityFactory.renderer(this.world, this.canvas)
+    EntityFactory.camera(this.world)
     console.log('Entities registered!')
   }
   
@@ -36,6 +44,9 @@ export class World {
     console.log('Registering systems...')
     this.world.registerSystem(RendererSystem)
     this.world.registerSystem(SceneSystem)
+    this.world.registerSystem(CameraSystem)
+
+    this.world.registerSystem(RenderSystem)
 
     console.log('Registering cleanup system...')
     this.world.registerSystem(CleanupSystem)

@@ -1,3 +1,5 @@
+export * from './camera'
 export * from './cleanup'
+export * from './render'
 export * from './renderer'
 export * from './scene'
