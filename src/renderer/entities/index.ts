@@ -1,3 +1,5 @@
 export * from './camera'
+export * from './grid'
+export * from './gird-tiles'
 export * from './renderer'
 export * from './scene'

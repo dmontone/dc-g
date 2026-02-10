@@ -1,11 +1,10 @@
-import { World as ECSYWorld } from 'ecsy'
-import { RendererComponent, SceneComponent } from '@/components'
-import { SceneSystem, RendererSystem, CleanupSystem, CameraSystem, RenderSystem } from '@/systems'
+import { ComponentConstructor, World as ECSYWorld } from 'ecsy'
+import { SceneSystem, RendererSystem, CleanupSystem, CameraSystem, RenderSystem, GridSystem } from '@/systems'
 import * as EntityFactory from '@/entities'
+import * as EngineComponents from '@/components'
 import * as TagComponents from '@/components/tags'
-import { CameraInstanceComponent, OrthographicConfig } from './components/camera'
-import { CameraPositionComponent } from './components/camera/position'
-import { CameraTargetComponent } from './components/camera/target'
+import * as CameraComponents from '@/components/camera'
+import * as GridComponents from '@/components/grid'
 
 export class World {
   constructor(
@@ -17,54 +16,60 @@ export class World {
     this.registerEntities()
   }
 
-  private registerComponents() {
-    console.log('Registering tag components...')
-    Object.values(TagComponents).forEach(TagComponent =>this.world.registerComponent(TagComponent))
+  private registerComponentBatch = (Ctor: ComponentConstructor<any>) => this.world.registerComponent(Ctor)
 
-    console.log('Registering scene components...')
-    this.world.registerComponent<SceneComponent>(SceneComponent)
-    this.world.registerComponent<RendererComponent>(RendererComponent)
-    this.world.registerComponent<CameraInstanceComponent>(CameraInstanceComponent)
-    this.world.registerComponent<CameraPositionComponent>(CameraPositionComponent)
-    this.world.registerComponent<CameraTargetComponent>(CameraTargetComponent)
-    this.world.registerComponent<OrthographicConfig>(OrthographicConfig)
+  private registerComponents() {
+    console.log('Registering components...')
+
+    console.log('Registering tag components...')
+    Object.values(TagComponents).forEach(this.registerComponentBatch)
+
+    console.log('Registering engine components...')
+    Object.values(EngineComponents).forEach(this.registerComponentBatch)
+
+    console.log('Registering camera components...')
+    Object.values(CameraComponents).forEach(this.registerComponentBatch)
+
+    console.log('Registering grid components...')
+    Object.values(GridComponents).forEach(this.registerComponentBatch)
 
     console.log('Components registered!')
   }
-  
+
   private registerEntities() {
     console.log('Registering general entities...')
     EntityFactory.scene(this.world)
     EntityFactory.renderer(this.world, this.canvas)
     EntityFactory.camera(this.world)
+    EntityFactory.grid(this.world)
     console.log('Entities registered!')
   }
-  
+
   private registerSystems() {
     console.log('Registering systems...')
     this.world.registerSystem(RendererSystem)
     this.world.registerSystem(SceneSystem)
     this.world.registerSystem(CameraSystem)
-
     this.world.registerSystem(RenderSystem)
+
+    console.log('Registering grid system...')
+    this.world.registerSystem(GridSystem)
 
     console.log('Registering cleanup system...')
     this.world.registerSystem(CleanupSystem)
-    
+
     console.log('Systems registered!')
   }
 
-
-
   public start(): void {
-      const animate = () => {
-        requestAnimationFrame(animate)
-        this.world.execute(1 / 60)
-  
-        // const cameraComp = this.ecsyWorld.getSystem(CameraSystem)?.queries.cameras.results[0]?.getComponent(CameraComponent)
-        // if (cameraComp?.instance) this.engine.render(cameraComp.instance)
-      }
-  
-      animate()
+    const animate = () => {
+      requestAnimationFrame(animate)
+      this.world.execute(1 / 60)
+
+      // const cameraComp = this.ecsyWorld.getSystem(CameraSystem)?.queries.cameras.results[0]?.getComponent(CameraComponent)
+      // if (cameraComp?.instance) this.engine.render(cameraComp.instance)
     }
+
+    animate()
+  }
 }

@@ -1,0 +1,1 @@
+export const getIndex = (q: number, r: number, radius: number) => (r + radius) * (radius * 2 + 1) + (q + radius)

@@ -1,4 +1,6 @@
 export * from './camera'
 export * from './dirty'
+export * from './grid'
+export * from './grid-tile'
 export * from './renderer'
 export * from './scene'
