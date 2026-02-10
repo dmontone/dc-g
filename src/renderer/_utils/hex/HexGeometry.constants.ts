@@ -1,2 +1,0 @@
-export const HEXAGON_VERTEX_COUNT = 6
-export const HEXAGON_TRIANGLE_COUNT = 6
