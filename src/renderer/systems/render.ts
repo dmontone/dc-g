@@ -6,21 +6,30 @@ import { CameraInstanceComponent } from '@/components/camera'
 
 export class RenderSystem extends System {
   static queries = {
-    renderer: { components: [RendererTag] },
-    camera: { components: [CameraTag] },
-    scene: { components: [SceneTag] }
+    renderer: { components: [RendererTag, RendererComponent], listen: { added: true, removed: true } },
+    camera: { components: [CameraTag, CameraInstanceComponent], listen: { added: true, removed: true } },
+    scene: { components: [SceneTag, SceneComponent], listen: { added: true, removed: true } }
   }
 
-  execute(_delta: number): void {
-    const { renderer } = this.queries.renderer.results?.[0]?.getComponent(RendererComponent)
-    const { value: instance } = this.queries.camera.results?.[0]?.getComponent(CameraInstanceComponent)
-    const { value: scene } = this.queries.scene.results?.[0]?.getComponent(SceneComponent)
-    
-    if (renderer && instance && scene) this.update(renderer, instance, scene)
+  private _renderer: THREE.WebGLRenderer | null = null
+  private _camera: THREE.Camera | null = null
+  private _scene: THREE.Scene | null = null
+
+  execute(): void {
+    this.checkRequests()
+    if (!this._renderer || !this._camera || !this._scene) return
+    this._renderer.render(this._scene, this._camera)
   }
-  
-  private update(renderer: THREE.WebGLRenderer, camera: THREE.Camera, scene: THREE.Scene): void {
-    // console.log('[RenderSystem]: update')
-    renderer.render(scene, camera)
+
+  private checkRequests(): void {
+    const { renderer, camera, scene } = this.queries
+
+    if (renderer.added?.length) this._renderer = renderer.results[0].getComponent(RendererComponent).renderer
+    if (camera.added?.length)   this._camera   = camera.results[0].getComponent(CameraInstanceComponent).value
+    if (scene.added?.length)    this._scene    = scene.results[0].getComponent(SceneComponent).value
+
+    if (renderer.removed?.length) this._renderer = null
+    if (camera.removed?.length)   this._camera   = null
+    if (scene.removed?.length)    this._scene    = null
   }
 }
