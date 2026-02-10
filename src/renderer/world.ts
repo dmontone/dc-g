@@ -1,5 +1,5 @@
 import { ComponentConstructor, World as ECSYWorld } from 'ecsy'
-import { SceneSystem, RendererSystem, CleanupSystem, CameraSystem, RenderSystem, GridSystem } from '@/systems'
+import { SceneSystem, RendererSystem, CleanupSystem, CameraSystem, RenderSystem, GridSystem, GridMeshSystem } from '@/systems'
 import * as EntityFactory from '@/entities'
 import * as EngineComponents from '@/components'
 import * as TagComponents from '@/components/tags'
@@ -50,12 +50,12 @@ export class World {
     this.world.registerSystem(RendererSystem)
     this.world.registerSystem(SceneSystem)
     this.world.registerSystem(CameraSystem)
+    
+    this.world.registerSystem(GridSystem)
+    this.world.registerSystem(GridMeshSystem)
+    
     this.world.registerSystem(RenderSystem)
 
-    console.log('Registering grid system...')
-    this.world.registerSystem(GridSystem)
-
-    console.log('Registering cleanup system...')
     this.world.registerSystem(CleanupSystem)
 
     console.log('Systems registered!')
