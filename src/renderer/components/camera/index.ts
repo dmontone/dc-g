@@ -1,4 +1,5 @@
 export * from './config-ortographic'
 export * from './instance'
 export * from './position'
+export * from './state'
 export * from './target'

@@ -29,6 +29,8 @@ export class InteractionSystem extends System {
     const camera = cameraEnt.getComponent(CameraInstanceComponent).value
     const grid = gridEnt.getComponent(GridComponent)
 
+    if (!camera) return
+
     this.raycaster.setFromCamera(this.mouse, camera)
     this.raycaster.ray.intersectPlane(this.planeZ, this.intersection)
 

@@ -1,4 +1,5 @@
 export * from './camera'
+export * from './camera-controls'
 export * from './cleanup'
 export * from './grid'
 export * from './grid-mesh'

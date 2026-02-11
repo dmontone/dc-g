@@ -1,5 +1,15 @@
 import { ComponentConstructor, World as ECSYWorld } from 'ecsy'
-import { SceneSystem, RendererSystem, CleanupSystem, CameraSystem, RenderSystem, GridSystem, GridMeshSystem, InteractionSystem } from '@/systems'
+import {
+  SceneSystem,
+  RendererSystem,
+  CleanupSystem,
+  CameraSystem,
+  RenderSystem,
+  GridSystem,
+  GridMeshSystem,
+  InteractionSystem,
+  CameraControlSystem
+} from '@/systems'
 import * as EntityFactory from '@/entities'
 import * as EngineComponents from '@/components'
 import * as TagComponents from '@/components/tags'
@@ -47,17 +57,28 @@ export class World {
 
   private registerSystems() {
     console.log('Registering systems...')
+
+    // 1. SETUP & INFRA
     this.world.registerSystem(RendererSystem)
     this.world.registerSystem(SceneSystem)
-    this.world.registerSystem(CameraSystem)
-    
+
+    // 2. INPUT & CONTROLS
+    this.world.registerSystem(InteractionSystem)
+    this.world.registerSystem(CameraControlSystem)
+
+    // 3. BUSINESS LOGICS
     this.world.registerSystem(GridSystem)
+
+    // 4. SYNC - Read what others wrote and transform into ThreeJS
+    this.world.registerSystem(CameraSystem)
+    this.world.registerSystem(GridMeshSystem)
+    this.world.registerSystem(CameraSystem)
     this.world.registerSystem(GridMeshSystem)
 
-    this.world.registerSystem(InteractionSystem)
-    
+    // 5. RENDERING
     this.world.registerSystem(RenderSystem)
 
+    // 6. CLEANUP
     this.world.registerSystem(CleanupSystem)
 
     console.log('Systems registered!')

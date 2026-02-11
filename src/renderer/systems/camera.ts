@@ -5,10 +5,7 @@ import { CameraInstanceComponent, OrthographicConfig, CameraPositionComponent, C
 
 export class CameraSystem extends System {
   static queries = {
-    new: {
-      components: [CameraTag],
-      listen: { added: true }
-    },
+    new: { components: [CameraTag], listen: { added: true } },
     dirty: { components: [CameraTag, DirtyTag] }
   }
 
@@ -18,36 +15,60 @@ export class CameraSystem extends System {
   }
 
   private setup(entity: Entity): void {
-    console.log('[CameraSystem]: setup')
-    let instance = entity.getMutableComponent(CameraInstanceComponent)
-
+    const instance = entity.getMutableComponent(CameraInstanceComponent)
     const config = entity.getComponent(OrthographicConfig)
 
     const aspect = window.innerWidth / window.innerHeight
-    instance.value = new THREE.OrthographicCamera(
-      -config.viewSize * aspect / 2,
-       config.viewSize * aspect / 2,
-       config.viewSize / 2,
+
+    // Inicialização da Câmera Ortográfica
+    const camera = new THREE.OrthographicCamera(
+      (-config.viewSize * aspect) / 2,
+      (config.viewSize * aspect) / 2,
+      config.viewSize / 2,
       -config.viewSize / 2,
-       config.near,
-       config.far
+      config.near,
+      config.far
     )
 
-    instance.value.up.set(0, 0, 1)
-    instance.value.updateProjectionMatrix()
+    // Estado da Arte: Z-Up para jogos de estratégia/grid
+    camera.up.set(0, 0, 1)
+    instance.value = camera
 
+    // Listener de Resize (Garante que o aspecto não quebre)
+    window.addEventListener('resize', () => {
+      const newAspect = window.innerWidth / window.innerHeight
+      camera.left = (-config.viewSize * newAspect) / 2
+      camera.right = (config.viewSize * newAspect) / 2
+      camera.top = config.viewSize / 2
+      camera.bottom = -config.viewSize / 2
+      camera.updateProjectionMatrix()
+
+      if (!entity.hasComponent(DirtyTag)) entity.addComponent(DirtyTag)
+    })
+
+    console.log('[CameraSystem]: Orthographic Camera Context Created')
     entity.addComponent(DirtyTag)
   }
 
   private update(entity: Entity): void {
-    console.log('[CameraSystem]: update')
-
-    let instance = entity.getMutableComponent(CameraInstanceComponent)
+    const instance = entity.getComponent(CameraInstanceComponent).value as THREE.OrthographicCamera
+    if (!instance) return
 
     const position = entity.getComponent(CameraPositionComponent).value
-    instance.value.position.set(position.x, position.y, position.z)
-
     const target = entity.getComponent(CameraTargetComponent).value
-    instance.value.lookAt(target.x, target.y, target.z)
+    const config = entity.getComponent(OrthographicConfig)
+
+    // Sincroniza posição e foco
+    instance.position.set(position.x, position.y, position.z)
+    instance.lookAt(target.x, target.y, target.z)
+
+    // ATUALIZA O FRUSTUM (Importante para o Zoom na Ortográfica)
+    const aspect = window.innerWidth / window.innerHeight
+    instance.left = (-config.viewSize * aspect) / 2
+    instance.right = (config.viewSize * aspect) / 2
+    instance.top = config.viewSize / 2
+    instance.bottom = -config.viewSize / 2
+
+    instance.updateProjectionMatrix()
   }
 }
