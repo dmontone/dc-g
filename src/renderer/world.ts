@@ -1,5 +1,5 @@
 import { ComponentConstructor, World as ECSYWorld } from 'ecsy'
-import { SceneSystem, RendererSystem, CleanupSystem, CameraSystem, RenderSystem, GridSystem, GridMeshSystem } from '@/systems'
+import { SceneSystem, RendererSystem, CleanupSystem, CameraSystem, RenderSystem, GridSystem, GridMeshSystem, InteractionSystem } from '@/systems'
 import * as EntityFactory from '@/entities'
 import * as EngineComponents from '@/components'
 import * as TagComponents from '@/components/tags'
@@ -53,6 +53,8 @@ export class World {
     
     this.world.registerSystem(GridSystem)
     this.world.registerSystem(GridMeshSystem)
+
+    this.world.registerSystem(InteractionSystem)
     
     this.world.registerSystem(RenderSystem)
 
@@ -65,9 +67,6 @@ export class World {
     const animate = () => {
       requestAnimationFrame(animate)
       this.world.execute(1 / 60)
-
-      // const cameraComp = this.ecsyWorld.getSystem(CameraSystem)?.queries.cameras.results[0]?.getComponent(CameraComponent)
-      // if (cameraComp?.instance) this.engine.render(cameraComp.instance)
     }
 
     animate()
