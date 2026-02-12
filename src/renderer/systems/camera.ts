@@ -18,14 +18,12 @@ export class CameraSystem extends System {
     const instance = entity.getMutableComponent(CameraInstanceComponent)
     const config = entity.getComponent(OrthographicConfig)
 
-    const aspect = window.innerWidth / window.innerHeight
-
     // Inicialização da Câmera Ortográfica
     const camera = new THREE.OrthographicCamera(
-      (-config.viewSize * aspect) / 2,
-      (config.viewSize * aspect) / 2,
-      config.viewSize / 2,
-      -config.viewSize / 2,
+      0,
+      0,
+      0,
+      0,
       config.near,
       config.far
     )
@@ -36,13 +34,6 @@ export class CameraSystem extends System {
 
     // Listener de Resize (Garante que o aspecto não quebre)
     window.addEventListener('resize', () => {
-      const newAspect = window.innerWidth / window.innerHeight
-      camera.left = (-config.viewSize * newAspect) / 2
-      camera.right = (config.viewSize * newAspect) / 2
-      camera.top = config.viewSize / 2
-      camera.bottom = -config.viewSize / 2
-      camera.updateProjectionMatrix()
-
       if (!entity.hasComponent(DirtyTag)) entity.addComponent(DirtyTag)
     })
 
@@ -63,12 +54,19 @@ export class CameraSystem extends System {
     instance.lookAt(target.x, target.y, target.z)
 
     // ATUALIZA O FRUSTUM (Importante para o Zoom na Ortográfica)
-    const aspect = window.innerWidth / window.innerHeight
-    instance.left = (-config.viewSize * aspect) / 2
-    instance.right = (config.viewSize * aspect) / 2
-    instance.top = config.viewSize / 2
-    instance.bottom = -config.viewSize / 2
+    this.updateProjection(instance, config)
+  }
 
-    instance.updateProjectionMatrix()
+  private updateProjection(camera: THREE.OrthographicCamera, config: OrthographicConfig): void {
+    const aspect = window.innerWidth / window.innerHeight
+    const halfHeight = config.viewSize / 2
+    const halfWidth = halfHeight * aspect
+
+    camera.left = -halfWidth
+    camera.right = halfWidth
+    camera.top = halfHeight
+    camera.bottom = -halfHeight
+
+    camera.updateProjectionMatrix()
   }
 }

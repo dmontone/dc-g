@@ -16,6 +16,7 @@ export class InteractionSystem extends System {
   private mouse = new THREE.Vector2()
   private planeZ = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0) // Plano do Grid (Z=0)
   private intersection = new THREE.Vector3()
+  private lastHovered = { q: Number.NaN, r: Number.NaN }
 
   execute() {
     // Escuta o movimento do mouse (você pode mover isso para um evento global)
@@ -36,10 +37,16 @@ export class InteractionSystem extends System {
 
     const hex = worldToGrid(this.intersection.x, this.intersection.y, 1)
     const dist = (Math.abs(hex.q) + Math.abs(hex.r) + Math.abs(-hex.q - hex.r)) / 2
-    
-    if (dist <= grid.radius) {
-      console.log(`Mouse sobre o Hex: q:${hex.q}, r:${hex.r}`)
-      // Aqui você poderia adicionar uma Tag "Selected" ou "Hovered" em uma entidade
+
+    if (dist > grid.radius) {
+      this.lastHovered.q = Number.NaN
+      this.lastHovered.r = Number.NaN
+      return
     }
+
+    if (this.lastHovered.q === hex.q && this.lastHovered.r === hex.r) return
+
+    this.lastHovered.q = hex.q
+    this.lastHovered.r = hex.r
   }
 }
