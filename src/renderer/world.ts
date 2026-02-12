@@ -72,8 +72,6 @@ export class World {
     // 4. SYNC - Read what others wrote and transform into ThreeJS
     this.world.registerSystem(CameraSystem)
     this.world.registerSystem(GridMeshSystem)
-    this.world.registerSystem(CameraSystem)
-    this.world.registerSystem(GridMeshSystem)
 
     // 5. RENDERING
     this.world.registerSystem(RenderSystem)

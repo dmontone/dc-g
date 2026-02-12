@@ -69,7 +69,6 @@ export class GridMeshSystem extends System {
     mesh.instanceMatrix.needsUpdate = true
     if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true
     
-    console.log(`[GridMeshSystem]: Sync complete. ${idx} instances updated.`)
   }
 
   private disposeMesh(entity: Entity, scene: THREE.Scene) {
